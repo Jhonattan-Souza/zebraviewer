@@ -19,19 +19,20 @@ namespace ZebraViewer.Services
                 yield return new Printer
                 {
                     Name = printer.GetPropertyValue("Name").ToString(),
-                    PortName = printer.GetPropertyValue("PortName").ToString()
+                    PortName = printer.GetPropertyValue("PortName").ToString(),
+                    OldPortName = printer.GetPropertyValue("PortName").ToString()
                 };
             }
         }
 
-        public static void SetPrinterPort(Printer printerToChange, string portPath)
+        public static void SetPrinterPort(Printer printerToChange, string portPath, bool toOlderName)
         {
             ManagementObjectSearcher searcher = 
-                new ManagementObjectSearcher($"SELECT * FROM Win32_Printer where Name like %{printerToChange.Name}%");
+                new ManagementObjectSearcher($"SELECT * FROM Win32_Printer where Name = '{printerToChange.Name}'");
 
             foreach (ManagementObject printer in searcher.Get())
             {
-                printer.SetPropertyValue("PortName", portPath);
+                printer.SetPropertyValue("PortName", toOlderName ? printerToChange.OldPortName : portPath);
             }
         }
     }

@@ -63,6 +63,7 @@
     </ApplicationDefinition>
     <Compile Include="Models\Printer.cs" />
     <Compile Include="Services\PrinterService.cs" />
+    <Compile Include="Services\ZebraAPI.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
