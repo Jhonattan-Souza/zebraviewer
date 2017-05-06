@@ -12,11 +12,11 @@ namespace ZebraViewer.Services
     {
         private const string BASE_URL = "http://api.labelary.com/v1/printers/8dpmm/labels/4x6/0/";
 
-        public void GetPrinterFile(string printerCode)
+        public static void CreateImageFileFromPrinter(string printerCode)
         {
             var request = (HttpWebRequest) WebRequest.Create(BASE_URL);
 
-            var zplCode = EncodeToByte(printerCode);
+            var zplCode = Encoding.UTF8.GetBytes(printerCode);
 
             request.Method = "POST";
             request.ContentType = "application/x-www-form-urlencoded";
@@ -28,9 +28,13 @@ namespace ZebraViewer.Services
 
             try
             {
-                var response = (HttpWebResponse)request.GetResponse();
+                var response = (HttpWebResponse) request.GetResponse();
                 var responseStream = response.GetResponseStream();
-                var fileStream = File.Create(@"E:\dev\label.png");
+
+                var fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "label.png");
+
+                var fileStream = File.Create(fileName);
+
                 responseStream.CopyTo(fileStream);
                 responseStream.Close();
                 fileStream.Close();
@@ -39,11 +43,6 @@ namespace ZebraViewer.Services
             {
                 e.ToString();
             }
-        }
-
-        private byte[] EncodeToByte(string printerCode)
-        {
-            return Encoding.UTF8.GetBytes(printerCode);
         }
     }
 }
