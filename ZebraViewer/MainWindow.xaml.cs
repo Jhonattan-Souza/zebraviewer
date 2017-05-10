@@ -33,7 +33,14 @@ namespace ZebraViewer
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            PrinterService.SetPrinterPort((Printer)cboPrinters.SelectedItem, true);
+            try
+            {
+                if (cboPrinters.SelectedItem != null)
+                    PrinterService.SetPrinterPort((Printer)cboPrinters.SelectedItem, true);
+            }
+            catch (Exception exception) {
+                MessageBox.Show($"Erro no fechamento do formuilário. \n{exception.Message}");
+            }
 
             base.OnClosing(e);
         }
@@ -50,7 +57,7 @@ namespace ZebraViewer
 
         }
 
-        private void tglPortChanged_Checked(object sender, RoutedEventArgs e)
+        private void tglPortChanged_Clicked(object sender, RoutedEventArgs e)
         {
             if (cboPrinters.SelectedItem != null)
             {
@@ -58,7 +65,7 @@ namespace ZebraViewer
                 {
                     tglPortChanged.IsChecked = false;
                 }
-
+                
                 PrinterService.SetPrinterPort((Printer)cboPrinters.SelectedItem, (bool)!tglPortChanged.IsChecked);
             }
             else

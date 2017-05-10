@@ -26,18 +26,24 @@ namespace ZebraViewer.Services
             }
         }
 
-        public static void SetPrinterPort(Printer printerToChange, bool toOlderName)
+        public static void SetPrinterPort(Printer printerToChange, bool setToOlderName)
         {
-            ManagementObjectSearcher searcher = 
+            ManagementObjectSearcher searcher =
                 new ManagementObjectSearcher($"SELECT * FROM Win32_Printer where Name = '{printerToChange.Name}'");
 
-            File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "label.txt"));
+            string localPortName = Path.Combine(
+                   Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "label.txt"
+             );
 
-            printerToChange.PortName = toOlderName ? printerToChange.OldPortName : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "label.txt");
+            File.Create(localPortName);
+            
+            printerToChange.PortName = setToOlderName ? printerToChange.OldPortName : localPortName;
 
             foreach (ManagementObject printer in searcher.Get())
             {
-                printer.SetPropertyValue("PortName", toOlderName ? printerToChange.OldPortName : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "label.txt"));
+                printer.SetPropertyValue("PortName", printerToChange.PortName);
+
+                printer.Put();
             }
         }
     }
