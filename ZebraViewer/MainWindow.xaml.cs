@@ -36,7 +36,7 @@ namespace ZebraViewer
             try
             {
                 if (cboPrinters.SelectedItem != null)
-                    PrinterService.SetPrinterPort((Printer)cboPrinters.SelectedItem, true);
+                    new PrinterService().SetPrinterPort((Printer)cboPrinters.SelectedItem, true);
             }
             catch (Exception exception) {
                 MessageBox.Show($"Erro no fechamento do formuilário. \n{exception.Message}");
@@ -48,7 +48,9 @@ namespace ZebraViewer
 
         private void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
-            ZebraAPI.CreateImageFileFromPrinter(File.ReadAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "label.txt")));
+            string printerCode = File.ReadAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "label.txt"));
+
+            ZebraAPI.CreateImageFileFromPrinter(printerCode);
 
             if (File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "label.png")))
                 imgLabel.Source = new BitmapImage(new Uri(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "label.png"), UriKind.Absolute));
@@ -65,8 +67,8 @@ namespace ZebraViewer
                 {
                     tglPortChanged.IsChecked = false;
                 }
-                
-                PrinterService.SetPrinterPort((Printer)cboPrinters.SelectedItem, (bool)!tglPortChanged.IsChecked);
+
+                new PrinterService().SetPrinterPort((Printer)cboPrinters.SelectedItem, (bool)!tglPortChanged.IsChecked);
             }
             else
             {

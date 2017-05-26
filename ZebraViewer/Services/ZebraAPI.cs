@@ -36,6 +36,7 @@ namespace ZebraViewer.Services
                 var fileStream = File.Create(fileName);
 
                 responseStream.CopyTo(fileStream);
+
                 responseStream.Close();
                 fileStream.Close();
             }
