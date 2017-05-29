@@ -7,6 +7,7 @@ using System.Management;
 using System.Management.Automation;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using ZebraViewer.Models;
 
 namespace ZebraViewer.Services
@@ -74,7 +75,7 @@ namespace ZebraViewer.Services
         /// <param name="setToOlderName"></param>
         public void SetPrinterPort(Printer printerToChange, bool setToOlderName)
         {
-            if (!IsAppDataDoorEnabled()) CreateAppDataPrinterPort();
+            if (!IsAppDataDoorEnabled() && HasPowerShellPrinterCommand()) CreateAppDataPrinterPort();
 
             ManagementObjectSearcher searcher =
                 new ManagementObjectSearcher($"SELECT * FROM Win32_Printer where Name = '{printerToChange.Name}'");
@@ -94,5 +95,14 @@ namespace ZebraViewer.Services
                 printer.Put();
             }
         }
+
+        private bool HasPowerShellPrinterCommand() {
+
+            var name = (from x in new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem").Get().Cast<ManagementObject>()
+                        select x.GetPropertyValue("Caption")).FirstOrDefault();
+            name = name != null ? name.ToString() : "Windows 7";
+
+            return !name.ToString().Contains("Windows 7");
+        }            
     }
 }
