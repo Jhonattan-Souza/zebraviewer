@@ -38,7 +38,8 @@ namespace ZebraViewer
                 if (cboPrinters.SelectedItem != null)
                     new PrinterService().SetPrinterPort((Printer)cboPrinters.SelectedItem, true);
             }
-            catch (Exception exception) {
+            catch (Exception exception)
+            {
                 MessageBox.Show($"Erro no fechamento do formuilário. \n{exception.Message}");
             }
 
@@ -61,20 +62,25 @@ namespace ZebraViewer
 
         private void tglPortChanged_Clicked(object sender, RoutedEventArgs e)
         {
-            if (cboPrinters.SelectedItem != null)
+            try
             {
-                if (!tglPortChanged.IsChecked.HasValue)
+                if (cboPrinters.SelectedItem != null)
                 {
+                    if (!tglPortChanged.IsChecked.HasValue)
+                    {
+                        tglPortChanged.IsChecked = false;
+                    }
+
+                    new PrinterService().SetPrinterPort((Printer)cboPrinters.SelectedItem, (bool)!tglPortChanged.IsChecked);
+                }
+                else
+                {
+                    MessageBox.Show("Selecione uma impressora por favor.");
                     tglPortChanged.IsChecked = false;
                 }
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
 
-                new PrinterService().SetPrinterPort((Printer)cboPrinters.SelectedItem, (bool)!tglPortChanged.IsChecked);
-            }
-            else
-            {
-                MessageBox.Show("Selecione uma impressora por favor.");
-                tglPortChanged.IsChecked = false;
-            }
         }
     }
 }

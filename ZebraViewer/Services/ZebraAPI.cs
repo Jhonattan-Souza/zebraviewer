@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace ZebraViewer.Services
 {
@@ -15,6 +16,18 @@ namespace ZebraViewer.Services
         public static void CreateImageFileFromPrinter(string printerCode)
         {
             var request = (HttpWebRequest) WebRequest.Create(BASE_URL);
+
+            WebProxy myProxy = new WebProxy();
+
+            Uri newUri = new Uri("http://192.168.0.10:8080");
+
+            // Associate the new Uri object to the myProxy object.
+            myProxy.Address = newUri;
+
+            // Create a NetworkCredential object and is assign to the Credentials property of the Proxy object.
+            myProxy.Credentials = new NetworkCredential("username", "password");
+
+            request.Proxy = myProxy;
 
             var zplCode = Encoding.UTF8.GetBytes(printerCode);
 
@@ -42,7 +55,7 @@ namespace ZebraViewer.Services
             }
             catch (WebException e)
             {
-                e.ToString();
+                MessageBox.Show(e.ToString());
             }
         }
     }
