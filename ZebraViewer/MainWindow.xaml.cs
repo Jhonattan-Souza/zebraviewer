@@ -51,7 +51,7 @@ namespace ZebraViewer
         {
             string printerCode = File.ReadAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "label.txt"));
 
-            ZebraAPI.CreateImageFileFromPrinter(printerCode);
+            ZebraApi.CreateImageFileFromPrinter(printerCode);
 
             if (File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "label.png")))
                 imgLabel.Source = new BitmapImage(new Uri(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "label.png"), UriKind.Absolute));

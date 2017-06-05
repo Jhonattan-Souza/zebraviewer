@@ -9,7 +9,7 @@ using System.Windows;
 
 namespace ZebraViewer.Services
 {
-    public class ZebraAPI
+    public class ZebraApi
     {
         private const string BASE_URL = "http://api.labelary.com/v1/printers/8dpmm/labels/4x6/0/";
 

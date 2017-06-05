@@ -18,24 +18,19 @@ namespace ZebraViewer.Services
         /// 
         /// </summary>
         /// <returns></returns>
-        private bool IsAppDataDoorEnabled()
+        private static bool IsAppDataDoorEnabled()
         {
-            string appDataDoorPath = GetAppDataDoorPath();
+            var appDataDoorPath = GetAppDataDoorPath();
 
-            foreach (var port in SerialPort.GetPortNames())
-            {
-                if (port == appDataDoorPath) return true;
-            }
-
-            return false;
+            return SerialPort.GetPortNames().Any(port => port == appDataDoorPath);
         }
 
-        private void CreateAppDataPrinterPort()
+        private static void CreateAppDataPrinterPort()
         {
-            using (PowerShell PowerShellInstance = PowerShell.Create())
+            using (var powerShellInstance = PowerShell.Create())
             {
-                PowerShellInstance.AddScript($"Add-PrinterPort -Name {GetAppDataDoorPath()}");
-                PowerShellInstance.Invoke();
+                powerShellInstance.AddScript($"Add-PrinterPort -Name {GetAppDataDoorPath()}");
+                powerShellInstance.Invoke();
             }
         }
 
@@ -43,7 +38,7 @@ namespace ZebraViewer.Services
         /// 
         /// </summary>
         /// <returns></returns>
-        private string GetAppDataDoorPath()
+        private static string GetAppDataDoorPath()
         {
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), 
                 "label.txt");
@@ -55,10 +50,11 @@ namespace ZebraViewer.Services
         /// <returns></returns>
         public static IEnumerable<Printer> GetPrinters()
         {
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_Printer");
+            var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_Printer");
 
-            foreach (ManagementObject printer in searcher.Get())
+            foreach (var o in searcher.Get())
             {
+                var printer = (ManagementObject) o;
                 yield return new Printer
                 {
                     Name = printer.GetPropertyValue("Name").ToString(),
@@ -77,10 +73,10 @@ namespace ZebraViewer.Services
         {
             if (!IsAppDataDoorEnabled() && HasPowerShellPrinterCommand()) CreateAppDataPrinterPort();
 
-            ManagementObjectSearcher searcher =
+            var searcher =
                 new ManagementObjectSearcher($"SELECT * FROM Win32_Printer where Name = '{printerToChange.Name}'");
 
-            string localPortName = Path.Combine(
+            var localPortName = Path.Combine(
                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "label.txt"
              );
 
@@ -88,21 +84,19 @@ namespace ZebraViewer.Services
 
             printerToChange.PortName = setToOlderName ? printerToChange.OldPortName : localPortName;
 
-            foreach (ManagementObject printer in searcher.Get())
+            foreach (var o in searcher.Get())
             {
+                var printer = (ManagementObject) o;
                 printer.SetPropertyValue("PortName", printerToChange.PortName);
 
                 printer.Put();
             }
         }
 
-        private bool HasPowerShellPrinterCommand() {
-
-            var name = (from x in new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem").Get().Cast<ManagementObject>()
-                        select x.GetPropertyValue("Caption")).FirstOrDefault();
-            name = name != null ? name.ToString() : "Windows 7";
-
-            return !name.ToString().Contains("Windows 7");
-        }            
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private static bool HasPowerShellPrinterCommand() => !SystemUtilities.GetOperationalSystemName().Contains("Windows 7");
     }
 }
