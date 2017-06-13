@@ -82,5 +82,11 @@ namespace ZebraViewer
             catch (Exception ex) { MessageBox.Show(ex.Message); }
 
         }
+
+        private void btnProxy_Click(object sender, RoutedEventArgs e)
+        {
+            Login loginForm = new Login();
+            loginForm.ShowDialog();
+        }
     }
 }

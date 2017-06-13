@@ -68,6 +68,9 @@
                 </TextBlock>
 
                 <Button Margin="15 0 0 0" Name="btnUpdate" Click="btnUpdate_Click">Atualizar</Button>
+
+                <Button Margin="15 0 0 0" Name="btnProxy" Click="btnProxy_Click">Proxy</Button>
+
             </StackPanel>
 
             <materialDesign:Card Padding="5" Margin="5">

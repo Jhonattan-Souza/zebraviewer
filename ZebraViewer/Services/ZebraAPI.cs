@@ -11,6 +11,10 @@ namespace ZebraViewer.Services
 {
     public class ZebraApi
     {
+
+        public static string Username { get; set; }
+        public static string Password { get; set; }
+
         private const string BASE_URL = "http://api.labelary.com/v1/printers/8dpmm/labels/4x6/0/";
 
         public static void CreateImageFileFromPrinter(string printerCode)
@@ -25,7 +29,8 @@ namespace ZebraViewer.Services
             myProxy.Address = newUri;
 
             // Create a NetworkCredential object and is assign to the Credentials property of the Proxy object.
-            myProxy.Credentials = new NetworkCredential("username", "password");
+            //myProxy.Credentials = new NetworkCredential("username", "password");
+            myProxy.Credentials = new NetworkCredential(ZebraApi.Username, ZebraApi.Password);
 
             request.Proxy = myProxy;
 
