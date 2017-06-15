@@ -5,9 +5,7 @@ using System.IO.Ports;
 using System.Linq;
 using System.Management;
 using System.Management.Automation;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+using ZebraViewer.Helpers;
 using ZebraViewer.Models;
 
 namespace ZebraViewer.Services
@@ -69,7 +67,7 @@ namespace ZebraViewer.Services
         /// </summary>
         /// <param name="printerToChange"></param>
         /// <param name="setToOlderName"></param>
-        public void SetPrinterPort(Printer printerToChange, bool setToOlderName)
+        public static void SetPrinterPort(Printer printerToChange, bool setToOlderName)
         {
             if (!IsAppDataDoorEnabled() && HasPowerShellPrinterCommand()) CreateAppDataPrinterPort();
 
@@ -80,7 +78,7 @@ namespace ZebraViewer.Services
                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "label.txt"
              );
 
-            File.Create(localPortName);
+            File.Create(localPortName).Close();
 
             printerToChange.PortName = setToOlderName ? printerToChange.OldPortName : localPortName;
 
@@ -98,5 +96,10 @@ namespace ZebraViewer.Services
         /// </summary>
         /// <returns></returns>
         private static bool HasPowerShellPrinterCommand() => !SystemUtilities.GetOperationalSystemName().Contains("Windows 7");
+
+        public static string GetPrinterFileCode()
+        {
+            return File.ReadAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "label.txt"));
+        } 
     }
 }
