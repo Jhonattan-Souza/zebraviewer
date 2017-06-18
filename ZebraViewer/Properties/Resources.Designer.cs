@@ -59,23 +59,5 @@ namespace ZebraViewer.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        internal static string Password {
-            get {
-                return ResourceManager.GetString("Password", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        internal static string Username {
-            get {
-                return ResourceManager.GetString("Username", resourceCulture);
-            }
-        }
     }
 }

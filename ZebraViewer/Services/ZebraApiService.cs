@@ -14,8 +14,8 @@ namespace ZebraViewer.Services
         {
             var httpClient = new HttpClient();
 
-            var content = new StringContent(zplCode, 
-                Encoding.UTF8, 
+            var content = new StringContent(zplCode,
+                Encoding.UTF8,
                 "application/x-www-form-urlencoded");
 
             var response = await httpClient.PostAsync(BaseUrl, content);
@@ -24,11 +24,15 @@ namespace ZebraViewer.Services
 
             using (var responseStream = await response.Content.ReadAsStreamAsync())
             {
-                var file = File.Create("ZPL_Label.png");
-                await responseStream.CopyToAsync(file);
-                file.Close();
+                string fileName;
 
-                return file.Name;
+                using (var file = File.Create("ZPL_Label.png"))
+                {
+                    fileName = file.Name;
+                    await responseStream.CopyToAsync(file);
+                }
+
+                return fileName;
             }
         }
     }

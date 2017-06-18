@@ -59,8 +59,16 @@ namespace ZebraViewer.ViewModels
         {
             var labelPath = await _zebraApiService.GetLabelAsync(PrinterService.GetPrinterFileCode());
 
-            if (labelPath != null) Label = new BitmapImage(new Uri(labelPath));
-            else MessageBox.Show("A etiqueta não foi gerada corretamente.");
+            if (labelPath != null)
+            {
+                Label = new BitmapImage();
+                Label.BeginInit();
+                Label.CacheOption = BitmapCacheOption.OnLoad;
+                Label.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+                Label.UriSource = new Uri(labelPath);
+                Label.EndInit();
+            } else
+                MessageBox.Show("A etiqueta não foi gerada corretamente.");
         }
     }
 }

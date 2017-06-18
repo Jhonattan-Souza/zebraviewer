@@ -17,7 +17,7 @@ namespace ZebraViewer
             var container = new Container();
             container.Register<IZebraApiService, ZebraApiService>();
             var zebraApiService = container.GetInstance<IZebraApiService>();
-
+            
             DataContext = new MainViewModel(zebraApiService);
         }
     }
