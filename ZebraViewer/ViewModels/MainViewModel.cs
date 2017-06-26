@@ -7,6 +7,8 @@ using Microsoft.Practices.Prism.Commands;
 using ZebraViewer.Models;
 using ZebraViewer.Services;
 using ZebraViewer.Services.Interfaces;
+using System.Windows.Media;
+using System.Windows.Input;
 
 namespace ZebraViewer.ViewModels
 {
@@ -20,6 +22,7 @@ namespace ZebraViewer.ViewModels
 
             ChangePortCommand = new DelegateCommand(ExecuteChangePortCommand, CanExecuteChangePortCommand);
             UpdateLabelCommand = new DelegateCommand(ExecuteUpdateLabelCommand);
+            //ZoomLabelImage = new DelegateCommand(ExecuteZoomLabelImage, () => Label != null);
             Printers = new ObservableCollection<Printer>(PrinterService.GetPrinters());
         }
 
@@ -47,6 +50,7 @@ namespace ZebraViewer.ViewModels
 
         public DelegateCommand ChangePortCommand { get; }
         public DelegateCommand UpdateLabelCommand { get; }
+        public DelegateCommand ZoomLabelImage { get; }
 
         private async void ExecuteChangePortCommand()
         {
@@ -70,5 +74,17 @@ namespace ZebraViewer.ViewModels
             } else
                 MessageBox.Show("A etiqueta não foi gerada corretamente.");
         }
+
+       /* private void ExecuteZoomLabelImage(object sender, MouseWheelEventArgs e)
+        {
+            var element = sender as UIElement;
+            var position = e.GetPosition(element);
+            var transform = element.RenderTransform as MatrixTransform;
+            var matrix = transform.Matrix;
+            var scale = e.Delta >= 0 ? 1.1 : (1.0 / 1.1);
+
+            matrix.ScaleAtPrepend(scale, scale, position.X, position.Y);
+            element.RenderTransform = new MatrixTransform(matrix);
+        }*/
     }
 }

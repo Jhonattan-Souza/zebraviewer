@@ -22,7 +22,10 @@
         </ResourceDictionary>
     </Window.Resources>
 
-    <ScrollViewer>
+    <ScrollViewer
+        HorizontalScrollBarVisibility="Visible" 
+        VerticalScrollBarVisibility="Visible">
+        
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
                 <ComboBox Name="CboPrinters"
@@ -69,18 +72,19 @@
                 <Button Margin="15 0 0 0" 
                         Name="BtnUpdate"
                         Command="{Binding UpdateLabelCommand}">Atualizar</Button>
-
-                <Button Margin="15 0 0 0" 
-                        Name="BtnProxy" 
-                        Command="{Binding ChangePortCommand}" >Proxy</Button>
-
+            
             </StackPanel>
 
             <materialDesign:Card Padding="5" 
                                  Margin="5">
+                
                 <Image Name="ImgLabel" 
                        Source="{Binding Label}" 
-                       Stretch="UniformToFill" />
+                       Stretch="UniformToFill"                       
+                       
+                       MouseWheel="ImgLabel_MouseWheel"
+                       />
+                
             </materialDesign:Card>
         </StackPanel>
     </ScrollViewer>

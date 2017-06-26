@@ -1,4 +1,6 @@
 ﻿using SimpleInjector;
+using System.Windows;
+using System.Windows.Media;
 using ZebraViewer.Services;
 using ZebraViewer.Services.Interfaces;
 using ZebraViewer.ViewModels;
@@ -19,6 +21,18 @@ namespace ZebraViewer
             var zebraApiService = container.GetInstance<IZebraApiService>();
             
             DataContext = new MainViewModel(zebraApiService);
+        }
+        
+        private void ImgLabel_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        {
+            var element = sender as UIElement;
+            var position = e.GetPosition(element);
+            var transform = element.RenderTransform as MatrixTransform;
+            var matrix = transform.Matrix;
+            var scale = e.Delta >= 0 ? 1.1 : (1.0 / 1.1);
+
+            matrix.ScaleAtPrepend(scale, scale, position.X, position.Y);
+            element.RenderTransform = new MatrixTransform(matrix);
         }
     }
 }
