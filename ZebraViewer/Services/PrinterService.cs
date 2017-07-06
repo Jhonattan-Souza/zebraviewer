@@ -99,7 +99,13 @@ namespace ZebraViewer.Services
 
         public static string GetPrinterFileCode()
         {
-            return File.ReadAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "label.txt"));
+            try
+            {
+                return File.ReadAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "label.txt"));
+            }
+            catch (Exception ex) {
+                throw new FileInUseException(ex);
+            }
         } 
     }
 }

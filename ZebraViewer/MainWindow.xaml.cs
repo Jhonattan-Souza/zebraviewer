@@ -34,5 +34,15 @@ namespace ZebraViewer
             matrix.ScaleAtPrepend(scale, scale, position.X, position.Y);
             element.RenderTransform = new MatrixTransform(matrix);
         }
+
+        private void TglPortChanged_Checked(object sender, RoutedEventArgs e)
+        {
+            this.CboPrinters.IsEnabled = false;
+        }
+
+        private void TglPortChanged_Unchecked(object sender, RoutedEventArgs e)
+        {
+            this.CboPrinters.IsEnabled = true;
+        }
     }
 }

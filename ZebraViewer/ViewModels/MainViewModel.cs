@@ -20,10 +20,12 @@ namespace ZebraViewer.ViewModels
         {
             _zebraApiService = zebraApiService;
 
-            ChangePortCommand = new DelegateCommand(ExecuteChangePortCommand, CanExecuteChangePortCommand);
+            ChangePortCommand = new DelegateCommand(ExecuteChangePortCommand,
+                CanExecuteChangePortCommand);
             UpdateLabelCommand = new DelegateCommand(ExecuteUpdateLabelCommand);
             //ZoomLabelImage = new DelegateCommand(ExecuteZoomLabelImage, () => Label != null);
             Printers = new ObservableCollection<Printer>(PrinterService.GetPrinters());
+            IsPrintersEnabled = true;
         }
 
         public ObservableCollection<Printer> Printers { get; }
@@ -46,23 +48,44 @@ namespace ZebraViewer.ViewModels
             set => SetProperty(ref _label, value);
         }
 
+        public bool IsPrintersEnabled { get; set; }
         public bool IsPortChanged { get; set; }
 
         public DelegateCommand ChangePortCommand { get; }
         public DelegateCommand UpdateLabelCommand { get; }
         public DelegateCommand ZoomLabelImage { get; }
-
+        
         private async void ExecuteChangePortCommand()
         {
-            await Task.Run(() => PrinterService.SetPrinterPort(SelectedPrinter, !IsPortChanged));
+            try
+            {
+                IsPrintersEnabled = !IsPortChanged;
+                await Task.Run(() => PrinterService.SetPrinterPort(SelectedPrinter, 
+                    !IsPortChanged));
+            }
+            catch (Exception o)
+            {
+                MessageBox.Show("Erro ao alterar a porta. Output: " + o.ToString(),
+                    "Atenção", MessageBoxButton.OK, MessageBoxImage.Error);                
+            }            
         }
 
         private bool CanExecuteChangePortCommand() => SelectedPrinter != null;
 
         private async void ExecuteUpdateLabelCommand()
         {
-            var labelPath = await _zebraApiService.GetLabelAsync(PrinterService.GetPrinterFileCode());
+            var labelPath = string.Empty;
 
+            try {
+                labelPath = await _zebraApiService.GetLabelAsync(PrinterService.GetPrinterFileCode());
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message,
+                    "Atenção", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            
             if (labelPath != null)
             {
                 Label = new BitmapImage();
@@ -72,7 +95,8 @@ namespace ZebraViewer.ViewModels
                 Label.UriSource = new Uri(labelPath);
                 Label.EndInit();
             } else
-                MessageBox.Show("A etiqueta não foi gerada corretamente.");
+                MessageBox.Show("A etiqueta não foi gerada corretamente.",
+                    "Atenção", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
        /* private void ExecuteZoomLabelImage(object sender, MouseWheelEventArgs e)

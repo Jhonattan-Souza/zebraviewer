@@ -1,7 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using ZebraViewer.Exceptions;
 using ZebraViewer.Services.Interfaces;
 
 namespace ZebraViewer.Services
@@ -12,27 +14,33 @@ namespace ZebraViewer.Services
 
         public async Task<string> GetLabelAsync(string zplCode)
         {
-            var httpClient = new HttpClient();
-
-            var content = new StringContent(zplCode,
-                Encoding.UTF8,
-                "application/x-www-form-urlencoded");
-
-            var response = await httpClient.PostAsync(BaseUrl, content);
-
-            if (!response.IsSuccessStatusCode) return null;
-
-            using (var responseStream = await response.Content.ReadAsStreamAsync())
+            try
             {
-                string fileName;
+                var httpClient = new HttpClient();
 
-                using (var file = File.Create("ZPL_Label.png"))
+                var content = new StringContent(zplCode,
+                    Encoding.UTF8,
+                    "application/x-www-form-urlencoded");
+
+                var response = await httpClient.PostAsync(BaseUrl, content);
+
+                if (!response.IsSuccessStatusCode) return null;
+
+                using (var responseStream = await response.Content.ReadAsStreamAsync())
                 {
-                    fileName = file.Name;
-                    await responseStream.CopyToAsync(file);
-                }
+                    string fileName;
 
-                return fileName;
+                    using (var file = File.Create("ZPL_Label.png"))
+                    {
+                        fileName = file.Name;
+                        await responseStream.CopyToAsync(file);
+                    }
+
+                    return fileName;
+                }
+            }
+            catch (Exception ex) {
+                throw new ZPLException(ex);
             }
         }
     }
